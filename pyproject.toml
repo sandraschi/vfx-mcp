@@ -9,7 +9,7 @@ description = "FastMCP 3.4+ server that wraps FFmpeg for video effects processin
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
-authors = [{ name = "Sandra Schieder" }]
+authors = [{ name = "Sandra Schipal" }]
 dependencies = [
     "fastmcp>=3.4.4,<4",
     "fastapi>=0.115.0",
