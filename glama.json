@@ -1,0 +1,72 @@
+{
+  "$schema": "https://glama.ai/schemas/mcp.json",
+  "name": "vfx-mcp",
+  "version": "0.1.0",
+  "description": "FastMCP 3.4+ FFmpeg video effects server: color grading, transitions, chroma key, blur, speed, crop, concat, text/image overlay — all via a single vfx_apply portmanteau tool.",
+  "author": "Sandra Schieder",
+  "license": "MIT",
+  "language": "python",
+  "framework": "fastmcp",
+  "type": "mcp_server",
+  "status": "beta",
+  "transport": ["stdio", "http"],
+  "keywords": [
+    "vfx",
+    "ffmpeg",
+    "video",
+    "effects",
+    "mcp",
+    "fastmcp",
+    "fastmcp-3.4",
+    "dual-transport"
+  ],
+  "categories": ["Developer Tools", "Creative Tools", "Video"],
+  "homepage": "https://github.com/sandraschi/vfx-mcp",
+  "repository": {
+    "url": "https://github.com/sandraschi/vfx-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "github",
+      "identifier": "sandraschi/vfx-mcp",
+      "transport": {
+        "type": "stdio",
+        "command": "uv",
+        "args": ["run", "python", "-m", "vfx_mcp", "--stdio"]
+      }
+    },
+    {
+      "registryType": "github",
+      "identifier": "sandraschi/vfx-mcp",
+      "transport": {
+        "type": "http",
+        "url": "http://127.0.0.1:11122/mcp"
+      }
+    }
+  ],
+  "mcpServers": {
+    "vfx-mcp": {
+      "name": "vfx-mcp",
+      "command": "uv",
+      "args": ["run", "python", "-m", "vfx_mcp", "--stdio"],
+      "env": {},
+      "description": "Stdio MCP (default for Claude Desktop / Cursor).",
+      "capabilities": {
+        "tools": { "enabled": true, "listChanged": true },
+        "resources": { "enabled": false },
+        "prompts": { "enabled": false }
+      }
+    },
+    "vfx-mcp-http": {
+      "name": "vfx-mcp-http",
+      "url": "http://127.0.0.1:11122/mcp",
+      "description": "Streamable HTTP MCP (FastMCP http_app). Requires: uv run python -m vfx_mcp --serve",
+      "capabilities": {
+        "tools": { "enabled": true, "listChanged": true },
+        "resources": { "enabled": false },
+        "prompts": { "enabled": false }
+      }
+    }
+  }
+}

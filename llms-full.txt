@@ -1,0 +1,56 @@
+# vfx-mcp — Full Documentation
+
+FastMCP 3.4+ server wrapping FFmpeg for video effects processing.
+
+## Tools
+
+### vfx_apply
+
+Portmanteau tool — 9 video effect operations:
+
+| Operation | Required Params | Optional Params | Description |
+|-----------|----------------|----------------|-------------|
+| `color_grade` | input_path, output_path, style | — | Apply color grading LUT |
+| `transition` | input_a, input_b, output_path | transition, duration | Crossfade/wipe between clips |
+| `chroma_key` | input_path, output_path | color, threshold | Green/blue screen removal |
+| `overlay_text` | input_path, output_path, text | position, font_size | Add text overlay |
+| `overlay_image` | input_path, overlay_path, output_path | position, scale | Add logo/watermark |
+| `blur` | input_path, output_path | blur_type, strength | Gaussian or box blur |
+| `speed` | input_path, output_path | rate | Change playback speed |
+| `crop` | input_path, output_path, width, height | x, y | Crop video |
+| `concat` | sources (list), output_path | — | Join multiple clips |
+
+## Return Format
+
+All operations return:
+```json
+{
+  "success": true,
+  "message": "Done",
+  "output_path": "path/to/output.mp4"
+}
+```
+
+On failure:
+```json
+{
+  "success": false,
+  "message": "FFmpeg error: ..."
+}
+```
+
+## Environment Variables
+
+| Variable | Default | Required | Description |
+|----------|---------|----------|-------------|
+| VFX_MCP_HOST | 127.0.0.1 | No | HTTP bind address |
+| VFX_MCP_PORT | 11122 | No | HTTP server port |
+| VFX_MCP_FFMPEG_PATH | ffmpeg | No | FFmpeg binary path |
+| VFX_MCP_FFPROBE_PATH | ffprobe | No | FFprobe binary path |
+| VFX_MCP_TIMEOUT_SECONDS | 300 | No | FFmpeg subprocess timeout |
+
+## API Endpoints
+
+- `GET /api/health` — Server health, version, uptime
+- `GET /api/v1/diagnostics` — Diagnostics with tool count, FFmpeg availability
+- `POST /mcp` — FastMCP streamable HTTP transport

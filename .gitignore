@@ -1,0 +1,52 @@
+# --- Python ---
+.venv/
+dist/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+.eggs/
+build/
+pip-wheel-metadata/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+
+# --- Node / frontend ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Env & secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Backups & editor junk ---
+*.bak
+*.bak2
+*~
+*.tmp
+*.temp
+*.swp
+*.swo
+.#*
+*.log
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,18 @@
+# vfx-mcp
+
+> FastMCP 3.4+ FFmpeg video effects server (port 11122). Translates natural language effect descriptions into FFmpeg filter complex strings.
+
+**Full doc (tools, env, config):** [llms-full.txt](llms-full.txt)
+
+## Entry
+
+- Python package: `src/vfx_mcp/` — `server.py` (FastMCP + FastAPI), `tools/effects.py` (portmanteau `vfx_apply`), `services/ffmpeg_effects.py` (filter builders)
+- Dual transport: stdio (`--stdio`) and HTTP (`--serve`, `/mcp`)
+- Config: `.env.example` (prefix `VFX_MCP_`)
+
+## Quick Start
+
+```powershell
+uv sync
+uv run python -m vfx_mcp --stdio
+```
