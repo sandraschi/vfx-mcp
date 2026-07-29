@@ -45,6 +45,9 @@ yarn-error.log*
 *.swo
 .#*
 *.log
+*.bak.*
+reports/
+*.mcpb
 
 # --- OS ---
 .DS_Store

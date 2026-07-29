@@ -239,13 +239,20 @@ def build_concat(sources: list[str], output_path: str) -> list[str]:
         return cmd
 
 
+def _error_response(error: str, error_type: str = "general", **kwargs) -> dict:
+    import logging
+
+    logging.getLogger("vfx_mcp").exception("FFmpeg error: %s [%s]", error, error_type)
+    return {"success": False, "message": error, "error_type": error_type, "data": kwargs}
+
+
 def _run_ffmpeg(cmd: list[str], timeout: int = 300) -> dict:
     try:
-        r = subprocess.run(cmd, capture_output=True, timeout=timeout)  # noqa: S603
+        r = subprocess.run(cmd, capture_output=True, timeout=timeout)
         if r.returncode != 0:
-            return {"success": False, "message": r.stderr.decode()[:500]}
-        return {"success": True, "message": "Done"}
+            return _error_response(r.stderr.decode()[:500], "ffmpeg_error")
+        return {"success": True, "message": "Done", "data": {"output": r.stderr.decode()[:200]}}
     except subprocess.TimeoutExpired:
-        return {"success": False, "message": "FFmpeg timed out"}
+        return _error_response("FFmpeg timed out", "timeout")
     except FileNotFoundError:
-        return {"success": False, "message": "FFmpeg not found on PATH"}
+        return _error_response("FFmpeg not found on PATH", "missing_dep")

@@ -1,0 +1,6 @@
+{
+  "name": "vfx-mcp",
+  "version": "0.1.0",
+  "description": "FFmpeg video effects via MCP",
+  "hooks": "../hooks/hooks.json"
+}

@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import time
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastmcp import FastMCP
+
+logger = logging.getLogger("vfx_mcp")
 
 from vfx_mcp import __version__
 from vfx_mcp.config import load_settings

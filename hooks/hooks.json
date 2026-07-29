@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "SessionStart": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "text",
+        "text": "## Session Context (vfx-mcp)\n\nYou have access to an FFmpeg video effects server with a `vfx_apply` portmanteau tool (9 operations: color_grade, transition, chroma_key, overlay_text, overlay_image, blur, speed, crop, concat).\n\n**Before starting work:**\n1. Run `vfx_apply` to process video files\n2. FFmpeg must be on PATH\n\n**At end of work:**\n- Clean up temporary output files"
+      }]
+    }]
+  }
+}

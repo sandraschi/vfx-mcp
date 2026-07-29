@@ -55,3 +55,22 @@ install sync="--extra dev":
 sync:
     cd '{{justfile_directory()}}'
     uv sync --extra dev
+
+# Bootstrap: install dev deps + pre-commit hook
+bootstrap:
+    uv sync --group dev
+    uv run pre-commit install
+    Write-Host "Pre-commit hooks installed." -ForegroundColor Green
+
+# ── Packaging ────────────────────────────────────────────────────────────────
+
+# Pack MCPB bundle
+mcpb-pack:
+    cd '{{justfile_directory()}}'
+    mcpb pack . dist/vfx-mcp-v$(uv run python -c "import vfx_mcp; print(vfx_mcp.__version__)").mcpb
+
+# ── Gates ────────────────────────────────────────────────────────────────────
+
+# Run all gates
+gates-green: fix test
+    Write-Host "All gates passed." -ForegroundColor Green

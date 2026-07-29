@@ -116,51 +116,55 @@ def register_vfx_tools(mcp: FastMCP) -> None:
 
         if operation == "color_grade":
             if not input_path or not style:
-                return {"success": False, "message": "input_path and style required for color_grade"}
+                return {"success": False, "message": "input_path and style required for color_grade", "data": {}}
             cmd = build_color_grade(input_path, out, style)
 
         elif operation == "transition":
             if not input_a or not input_b:
-                return {"success": False, "message": "input_a and input_b required for transition"}
+                return {"success": False, "message": "input_a and input_b required for transition", "data": {}}
             cmd = build_transition(input_a, input_b, out, transition or "crossfade", duration or 1)
 
         elif operation == "chroma_key":
             if not input_path:
-                return {"success": False, "message": "input_path required for chroma_key"}
+                return {"success": False, "message": "input_path required for chroma_key", "data": {}}
             cmd = build_chroma_key(input_path, out, color or "green", threshold or 0.5)
 
         elif operation == "overlay_text":
             if not input_path or not text:
-                return {"success": False, "message": "input_path and text required for overlay_text"}
+                return {"success": False, "message": "input_path and text required for overlay_text", "data": {}}
             cmd = build_overlay_text(input_path, out, text, position or "bottom_right", font_size or 24)
 
         elif operation == "overlay_image":
             if not input_path or not overlay_path:
-                return {"success": False, "message": "input_path and overlay_path required for overlay_image"}
+                return {
+                    "success": False,
+                    "message": "input_path and overlay_path required for overlay_image",
+                    "data": {},
+                }
             cmd = build_overlay_image(input_path, overlay_path, out, position or "bottom_right", scale or 1.0)
 
         elif operation == "blur":
             if not input_path:
-                return {"success": False, "message": "input_path required for blur"}
+                return {"success": False, "message": "input_path required for blur", "data": {}}
             cmd = build_blur(input_path, out, blur_type or "gaussian", strength or 5)
 
         elif operation == "speed":
             if not input_path:
-                return {"success": False, "message": "input_path required for speed"}
+                return {"success": False, "message": "input_path required for speed", "data": {}}
             cmd = build_speed(input_path, out, rate or 1.0)
 
         elif operation == "crop":
             if not input_path or not width or not height:
-                return {"success": False, "message": "input_path, width, and height required for crop"}
+                return {"success": False, "message": "input_path, width, and height required for crop", "data": {}}
             cmd = build_crop(input_path, out, width, height, x or 0, y or 0)
 
         elif operation == "concat":
             if not sources or len(sources) < 2:
-                return {"success": False, "message": "At least 2 source paths required for concat"}
+                return {"success": False, "message": "At least 2 source paths required for concat", "data": {}}
             cmd = build_concat(sources, out)
 
         if not cmd:
-            return {"success": False, "message": f"Unknown operation: {operation}"}
+            return {"success": False, "message": f"Unknown operation: {operation}", "data": {}}
 
         result = _run_ffmpeg(cmd)
         result["output_path"] = out

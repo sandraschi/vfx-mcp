@@ -1,0 +1,11 @@
+## Session Context (vfx-mcp)
+
+FastMCP 3.4+ FFmpeg video effects server — color grading, transitions, chroma key, blur, speed, crop, concat, text/image overlay.
+
+**Before starting work:**
+1. Check available effects via `vfx_apply` tool — 9 operations available
+2. Verify FFmpeg is on PATH for local testing
+
+**At end of work:**
+- Run `ruff check src/` and `ruff format src/` before committing
+- Run `uv run pytest` if tests exist
