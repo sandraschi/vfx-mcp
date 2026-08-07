@@ -6,7 +6,7 @@ REPO := justfile_directory()
 default:
     @just --list
 
-# ── Quality ───────────────────────────────────────────────────────────────────
+# --- Quality ---
 
 # Ruff lint Python source
 lint:
@@ -19,7 +19,7 @@ fix:
     uv run ruff check --fix src/
     uv run ruff format src/
 
-# ── Testing ───────────────────────────────────────────────────────────────────
+# --- Testing ---
 
 # Run Python tests
 test:
@@ -31,7 +31,7 @@ test-v:
     cd '{{justfile_directory()}}'
     uv run pytest -v
 
-# ── Serving ───────────────────────────────────────────────────────────────────
+# --- Serving ---
 
 # Start backend only (HTTP mode on port 11122)
 serve:
@@ -43,7 +43,7 @@ stdio:
     cd '{{justfile_directory()}}'
     uv run python -m vfx_mcp --stdio
 
-# ── Python ────────────────────────────────────────────────────────────────────
+# --- Python ---
 
 # Install all deps (Python). Run after git clone.
 install sync="--extra dev":
@@ -62,14 +62,14 @@ bootstrap:
     uv run pre-commit install
     Write-Host "Pre-commit hooks installed." -ForegroundColor Green
 
-# ── Packaging ────────────────────────────────────────────────────────────────
+# --- Packaging ---
 
 # Pack MCPB bundle
 mcpb-pack:
     cd '{{justfile_directory()}}'
     mcpb pack . dist/vfx-mcp-v$(uv run python -c "import vfx_mcp; print(vfx_mcp.__version__)").mcpb
 
-# ── Gates ────────────────────────────────────────────────────────────────────
+# --- Gates ---
 
 # Run all gates
 gates-green: fix test
