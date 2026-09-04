@@ -282,7 +282,11 @@ def build_concat(sources: list[str], output_path: str) -> list[str]:
 def _error_response(error: str, error_type: str = "general", **kwargs) -> dict:
     import logging
 
-    logging.getLogger("vfx_mcp").exception("FFmpeg error: %s [%s]", error, error_type)
+    # .exception() logs sys.exc_info() - correct inside an `except:` block,
+    # but this is called from normal control flow (a non-zero returncode is
+    # not a raised exception), so it always logged a useless "NoneType: None"
+    # traceback instead of anything about the actual FFmpeg failure.
+    logging.getLogger("vfx_mcp").error("FFmpeg error: %s [%s]", error, error_type)
     return {"success": False, "message": error, "error_type": error_type, "data": kwargs}
 
 
