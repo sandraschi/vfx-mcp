@@ -294,7 +294,11 @@ def _run_ffmpeg(cmd: list[str], timeout: int = 300) -> dict:
     try:
         r = subprocess.run(cmd, capture_output=True, timeout=timeout)
         if r.returncode != 0:
-            return _error_response(r.stderr.decode()[:500], "ffmpeg_error")
+            # FFmpeg always prints its version/build-config banner FIRST,
+            # then any actual error at the END - truncating to the first
+            # 500 chars showed only the useless banner and cut off before
+            # ever reaching the real error line.
+            return _error_response(r.stderr.decode()[-1000:], "ffmpeg_error")
         return {"success": True, "message": "Done", "data": {"output": r.stderr.decode()[:200]}}
     except subprocess.TimeoutExpired:
         return _error_response("FFmpeg timed out", "timeout")
