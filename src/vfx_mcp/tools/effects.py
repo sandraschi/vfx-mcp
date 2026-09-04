@@ -1,4 +1,4 @@
-"""VFX portmanteau tool — apply FFmpeg video effects."""
+"""VFX portmanteau tool - apply FFmpeg video effects."""
 
 from __future__ import annotations
 

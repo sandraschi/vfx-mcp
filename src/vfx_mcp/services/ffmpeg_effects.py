@@ -26,9 +26,49 @@ def build_color_grade(input_path: str, output_path: str, style: str) -> list[str
     return cmd
 
 
+def _probe_duration(path: str, ffprobe_path: str) -> float:
+    """Duration (seconds) of a media file via ffprobe. Falls back to a
+    conservative 3.0s guess if probing fails, so a transition still gets a
+    plausible (if imperfect) offset instead of crashing outright."""
+    try:
+        out = subprocess.run(
+            [
+                ffprobe_path,
+                "-v",
+                "error",
+                "-show_entries",
+                "format=duration",
+                "-of",
+                "default=noprint_wrappers=1:nokey=1",
+                path,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+        return float(out.stdout.strip())
+    except (subprocess.SubprocessError, ValueError, OSError):
+        return 3.0
+
+
 def build_transition(input_a: str, input_b: str, output_path: str, transition: str, duration: int) -> list[str]:
     cfg = load_settings()
+
+    # xfade (used by every transition type below except fade_to_black, which
+    # concatenates two independently-faded clips instead) blends its two
+    # inputs starting at `offset` seconds into input_a's own timeline - with
+    # no offset it defaults to 0, blending from input_a's very first frame
+    # instead of at the A-to-B boundary, which cuts off nearly all of A's
+    # own content. Probing input_a's real duration lets the transition start
+    # right before A ends, which is what "a transition between two clips"
+    # actually means.
+    if transition in ("crossfade", "wipe_left", "wipe_right", "slide"):
+        duration_a = _probe_duration(input_a, cfg.ffprobe_path)
+        offset = max(0.0, duration_a - duration)
+
     if transition == "crossfade":
+        # "crossfade" isn't a real FFmpeg filter name - the equivalent is
+        # xfade with transition=fade.
         cmd = [
             cfg.ffmpeg_path,
             "-i",
@@ -36,7 +76,7 @@ def build_transition(input_a: str, input_b: str, output_path: str, transition: s
             "-i",
             input_b,
             "-filter_complex",
-            f"crossfade=d={duration}",
+            f"xfade=transition=fade:duration={duration}:offset={offset}",
             output_path,
             "-y",
         ]
@@ -65,7 +105,7 @@ def build_transition(input_a: str, input_b: str, output_path: str, transition: s
             "-i",
             input_b,
             "-filter_complex",
-            f"xfade=transition=wipe{direction}:duration={duration}",
+            f"xfade=transition=wipe{direction}:duration={duration}:offset={offset}",
             output_path,
             "-y",
         ]
@@ -77,7 +117,7 @@ def build_transition(input_a: str, input_b: str, output_path: str, transition: s
             "-i",
             input_b,
             "-filter_complex",
-            f"xfade=transition=slideright:duration={duration}",
+            f"xfade=transition=slideright:duration={duration}:offset={offset}",
             output_path,
             "-y",
         ]

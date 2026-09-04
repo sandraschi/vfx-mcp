@@ -5,7 +5,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-import pytest
 
 from vfx_mcp.services.ffmpeg_effects import (
     build_blur,
@@ -30,7 +29,22 @@ def test_build_color_grade():
 
 def test_build_transition_crossfade():
     cmd = build_transition("a.mp4", "b.mp4", "out.mp4", "crossfade", 1)
-    assert "crossfade" in " ".join(cmd)
+    joined = " ".join(cmd)
+    # "crossfade" isn't a real FFmpeg filter - the actual filter used is
+    # xfade with transition=fade, which is what the command must contain.
+    assert "xfade=transition=fade" in joined
+    assert "duration=1" in joined
+    # offset shifts the blend to the input_a/input_b boundary instead of
+    # starting at frame 0 - a.mp4 doesn't exist so probing falls back to
+    # the documented 3.0s default duration, giving offset=3.0-1=2.0.
+    assert "offset=2.0" in joined
+
+
+def test_build_transition_wipe_has_offset():
+    cmd = build_transition("a.mp4", "b.mp4", "out.mp4", "wipe_left", 1)
+    joined = " ".join(cmd)
+    assert "xfade=transition=wipefrom_right" in joined
+    assert "offset=2.0" in joined
 
 
 def test_build_chroma_key():

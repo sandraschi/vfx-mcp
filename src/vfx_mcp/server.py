@@ -22,14 +22,22 @@ mcp = FastMCP(
     "vfx-mcp",
     version=__version__,
     instructions=(
-        "FFmpeg video effects via MCP — color grading, transitions, chroma key,"
+        "FFmpeg video effects via MCP - color grading, transitions, chroma key,"
         " blur, speed, crop, concat, text/image overlay."
     ),
 )
 
 register_all_tools(mcp)
 
-app = FastAPI(title="vfx-mcp", version=__version__)
+# mcp_app must exist before the FastAPI app so its lifespan can be passed
+# in at construction - without lifespan=mcp_app.lifespan, FastMCP's
+# StreamableHTTPSessionManager task group never starts, and /mcp requests
+# fail with "Task group is not initialized" once the mount's own routing
+# is correct (see the http_app(path="/") fix below for the other half of
+# this - both are needed for /mcp to actually work).
+mcp_app = mcp.http_app(path="/")
+
+app = FastAPI(title="vfx-mcp", version=__version__, lifespan=mcp_app.lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -80,5 +88,4 @@ async def diagnostics():
     }
 
 
-mcp_app = mcp.http_app()
 app.mount("/mcp", mcp_app)
